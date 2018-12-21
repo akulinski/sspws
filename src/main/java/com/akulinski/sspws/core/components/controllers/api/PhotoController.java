@@ -1,4 +1,4 @@
-package com.akulinski.sspws.core.components.controllers;
+package com.akulinski.sspws.core.components.controllers.api;
 
 import com.akulinski.sspws.core.components.entites.photo.PhotoEntity;
 import com.akulinski.sspws.core.components.entites.user.UserEntity;
