@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-@ComponentScan({"com.akulinski.sspws.core","com.akulinski.sspws.frontend","com.akulinski.sspws.config"})
+@ComponentScan({"com.akulinski.sspws.core","com.akulinski.sspws.config"})
 public class SspwsApplication {
 
     @Autowired
@@ -31,5 +31,6 @@ public class SspwsApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
 

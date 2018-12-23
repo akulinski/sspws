@@ -10,7 +10,6 @@ import lombok.Setter;
 public class AddPhotoRequest {
 
     private String data;
-    private String fileName;
     private String title;
     private String user;
     private String album;
@@ -18,5 +17,7 @@ public class AddPhotoRequest {
     public AddPhotoRequest(String data) {
         this.data = data;
     }
-
+    public String getPath(){
+        return String.format("photos/%s/%s/%s.jpg",user,album,title);
+    }
 }

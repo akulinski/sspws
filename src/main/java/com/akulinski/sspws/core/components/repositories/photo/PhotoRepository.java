@@ -9,5 +9,4 @@ import java.util.ArrayList;
 
 @Repository
 public interface PhotoRepository extends CrudRepository<PhotoEntity, Integer> {
-    ArrayList<PhotoEntity> findByUserEntity(UserEntity userEntity);
 }

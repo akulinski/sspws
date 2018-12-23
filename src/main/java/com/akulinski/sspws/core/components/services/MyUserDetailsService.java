@@ -17,11 +17,15 @@ import java.util.HashSet;
 @Service
 public class MyUserDetailsService implements UserDetailsService, Serializable {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final AuthorityRepository authorityRepository;
 
     @Autowired
-    private AuthorityRepository authorityRepository;
+    public MyUserDetailsService(UserRepository userRepository, AuthorityRepository authorityRepository) {
+        this.userRepository = userRepository;
+        this.authorityRepository = authorityRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) {

@@ -1,7 +1,7 @@
 package com.akulinski.sspws.core.components.entites.user;
 
 import com.akulinski.sspws.core.components.entites.BaseEntity;
-import com.akulinski.sspws.core.components.entites.photo.PhotoEntity;
+import com.akulinski.sspws.core.components.entites.photo.AlbumEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "id_user")
     private Integer id;
 
-    @Column(name = "username", nullable = false,unique = true)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false)
@@ -37,7 +37,7 @@ public class UserEntity extends BaseEntity {
     @Fetch(FetchMode.SELECT)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userEntity")
-    private Set<PhotoEntity> photoEntitySet;
+    private Set<AlbumEntity> albumEntitySet;
 
     @Fetch(FetchMode.SELECT)
     @LazyCollection(LazyCollectionOption.FALSE)
