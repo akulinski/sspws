@@ -1,38 +1,41 @@
 package com.akulinski.sspws.core.components.controllers.api;
 
+import com.akulinski.sspws.core.components.entites.photo.AlbumEntity;
 import com.akulinski.sspws.core.components.entites.photo.PhotoEntity;
 import com.akulinski.sspws.core.components.entites.user.UserEntity;
 import com.akulinski.sspws.core.components.repositories.photo.AlbumRepository;
-import com.akulinski.sspws.core.components.repositories.photo.PhotoDescriptionRepository;
 import com.akulinski.sspws.core.components.repositories.photo.PhotoRepository;
 import com.akulinski.sspws.core.components.repositories.user.UserRepository;
+import com.akulinski.sspws.models.AddPhotoRequest;
+import com.akulinski.sspws.utils.PhotoUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.Principal;
 import java.util.LinkedList;
 
 @RestController
 @RequestMapping("/photos")
+@Getter
+@Setter
 public class PhotoController {
 
     private final UserRepository userRepository;
 
     private final PhotoRepository photoRepository;
 
-    private final PhotoDescriptionRepository photoDescriptionRepository;
-
     private final AlbumRepository albumRepository;
+    private final PhotoRequestParser photoRequestParser = new PhotoRequestParser(this);
 
     @Autowired
-    public PhotoController(UserRepository userRepository, PhotoRepository photoRepository, PhotoDescriptionRepository photoDescriptionRepository, AlbumRepository albumRepository) {
+    public PhotoController(UserRepository userRepository, PhotoRepository photoRepository, AlbumRepository albumRepository) {
         this.userRepository = userRepository;
         this.photoRepository = photoRepository;
-        this.photoDescriptionRepository = photoDescriptionRepository;
         this.albumRepository = albumRepository;
     }
 
@@ -54,4 +57,23 @@ public class PhotoController {
         });
         return photoEntityLinkedList;
     }
+
+    @RequestMapping(value = "/addPhoto", method = RequestMethod.POST)
+    public ResponseEntity<PhotoEntity> addPhoto(@RequestBody AddPhotoRequest addPhotoRequest) throws IOException {
+
+        UserEntity userEntity = userRepository.getByUsername(addPhotoRequest.getUser());
+        PhotoEntity photoEntity = PhotoUtils.convertToFile(addPhotoRequest, userEntity);
+        photoRepository.save(photoEntity);
+
+        return new ResponseEntity<PhotoEntity>(photoEntity, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(value = "getPhoto/{albumName]/{title}")
+    public ResponseEntity<String> getPhoto(@PathVariable String albumName, @PathVariable String title, Principal principal) {
+
+        String base64 = photoRequestParser.getBase64OfRequestedPhoto(albumName, title, principal);
+
+        return new ResponseEntity<String>(base64, HttpStatus.ACCEPTED);
+    }
+
 }

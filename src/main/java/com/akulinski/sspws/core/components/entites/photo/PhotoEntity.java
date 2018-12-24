@@ -25,11 +25,6 @@ public class PhotoEntity extends BaseEntity {
     @Column(name = "title")
     private String title;
 
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            mappedBy = "photo")
-    private PhotoDescriptionEntity description;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id_album")
     private AlbumEntity albumEntity;

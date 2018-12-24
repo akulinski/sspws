@@ -1,11 +1,9 @@
 package com.akulinski.sspws.config;
 
 import com.akulinski.sspws.core.components.entites.photo.AlbumEntity;
-import com.akulinski.sspws.core.components.entites.photo.PhotoDescriptionEntity;
 import com.akulinski.sspws.core.components.entites.photo.PhotoEntity;
 import com.akulinski.sspws.core.components.entites.user.UserEntity;
 import com.akulinski.sspws.core.components.repositories.photo.AlbumRepository;
-import com.akulinski.sspws.core.components.repositories.photo.PhotoDescriptionRepository;
 import com.akulinski.sspws.core.components.repositories.photo.PhotoRepository;
 import com.akulinski.sspws.core.components.repositories.user.UserRepository;
 import com.thedeanda.lorem.Lorem;
@@ -28,8 +26,6 @@ public class UserMock {
 
     private PasswordEncoder passwordEncoder;
 
-    private final PhotoDescriptionRepository photoDescriptionRepository;
-
     private final PhotoRepository photoRepository;
 
     private AlbumRepository albumRepository;
@@ -39,12 +35,11 @@ public class UserMock {
     private SecureRandom secureRandom;
 
     @Autowired
-    public UserMock(UserRepository userRepository, PasswordEncoder passwordEncoder, PhotoDescriptionRepository photoDescriptionRepository, PhotoRepository photoRepository, AlbumRepository albumRepository) {
+    public UserMock(UserRepository userRepository, PasswordEncoder passwordEncoder,PhotoRepository photoRepository, AlbumRepository albumRepository) {
         this.userRepository = userRepository;
         this.albumRepository = albumRepository;
         this.nameGenerator = new NameGenerator();
         this.passwordEncoder = passwordEncoder;
-        this.photoDescriptionRepository = photoDescriptionRepository;
         this.photoRepository = photoRepository;
         this.lorem = LoremIpsum.getInstance();
         this.secureRandom = new SecureRandom();
@@ -78,10 +73,8 @@ public class UserMock {
 
         PhotoEntity photoEntity = getPhotoEntity(userEntity, albumEntity);
 
-        PhotoDescriptionEntity photoDescriptionEntity = getDescriptionEntity(photoEntity);
 
-
-        saveEntitesWith2Albums(userEntity, albumEntity, albumEntity1, photoEntity, photoDescriptionEntity);
+        saveEntitesWith2Albums(userEntity, albumEntity, albumEntity1, photoEntity);
     }
 
     private void createAndSaveEntites(Name name) {
@@ -90,37 +83,28 @@ public class UserMock {
         AlbumEntity albumEntity = getAlbumEntity(userEntity);
 
         PhotoEntity photoEntity = getPhotoEntity(userEntity, albumEntity);
-
-        PhotoDescriptionEntity photoDescriptionEntity = getDescriptionEntity(photoEntity);
-        saveEntites(userEntity, albumEntity, photoEntity, photoDescriptionEntity);
+        saveEntites(userEntity, albumEntity, photoEntity);
     }
 
-    private void saveEntitesWith2Albums(UserEntity userEntity, AlbumEntity albumEntity, AlbumEntity albumEntity1, PhotoEntity photoEntity, PhotoDescriptionEntity photoDescriptionEntity) {
+    private void saveEntitesWith2Albums(UserEntity userEntity, AlbumEntity albumEntity, AlbumEntity albumEntity1, PhotoEntity photoEntity) {
         userRepository.save(userEntity);
         albumRepository.save(albumEntity);
         albumRepository.save(albumEntity1);
         photoRepository.save(photoEntity);
-        photoDescriptionRepository.save(photoDescriptionEntity);
     }
 
-    private PhotoDescriptionEntity getDescriptionEntity(PhotoEntity photoEntity) {
-        PhotoDescriptionEntity photoDescriptionEntity = new PhotoDescriptionEntity();
-        photoDescriptionEntity.setDescription(lorem.getWords(secureRandom.nextInt(10)));
-        photoDescriptionEntity.setPhoto(photoEntity);
-        return photoDescriptionEntity;
-    }
 
-    private void saveEntites(UserEntity userEntity, AlbumEntity albumEntity, PhotoEntity photoEntity, PhotoDescriptionEntity photoDescriptionEntity) {
+    private void saveEntites(UserEntity userEntity, AlbumEntity albumEntity, PhotoEntity photoEntity) {
         userRepository.save(userEntity);
         albumRepository.save(albumEntity);
         photoRepository.save(photoEntity);
-        photoDescriptionRepository.save(photoDescriptionEntity);
     }
 
     private PhotoEntity getPhotoEntity(UserEntity userEntity, AlbumEntity albumEntity) {
         PhotoEntity photoEntity = new PhotoEntity();
         photoEntity.setLink("/" + userEntity.getUsername() + "/" + lorem.getTitle(1));
         photoEntity.setAlbumEntity(albumEntity);
+        photoEntity.setTitle(lorem.getTitle(1));
         return photoEntity;
     }
 

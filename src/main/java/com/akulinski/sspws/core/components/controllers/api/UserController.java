@@ -6,10 +6,7 @@ import com.akulinski.sspws.core.components.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -26,7 +23,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/getAllUsers")
+    @RequestMapping(value = "/getAllUsers",method={RequestMethod.GET,RequestMethod.POST})
     public ResponseEntity<List<UserEntity>> getAll() {
         return new ResponseEntity<List<UserEntity>>(userRepository.findAll(), HttpStatus.ACCEPTED);
     }
