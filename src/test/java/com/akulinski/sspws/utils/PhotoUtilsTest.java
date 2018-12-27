@@ -6,7 +6,6 @@ import com.akulinski.sspws.core.components.repositories.user.UserRepository;
 import com.akulinski.sspws.models.AddPhotoRequest;
 import com.akulinski.sspws.models.PhotosResponseModel;
 import junit.framework.TestCase;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -31,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class PhotoUtilsTest {
 
+    private final TestingUtils testingUtils = new TestingUtils();
     @Autowired
     private UserRepository userRepository;
 
@@ -39,7 +38,7 @@ public class PhotoUtilsTest {
     @Before
     public void setUp() throws Exception {
         addPhotoRequest = new AddPhotoRequest();
-        addPhotoRequest.setData(base64());
+        addPhotoRequest.setData(testingUtils.base64());
         addPhotoRequest.setAlbum("testAlbum");
         addPhotoRequest.setTitle("test");
         addPhotoRequest.setUser("tomeczek");
@@ -66,7 +65,7 @@ public class PhotoUtilsTest {
     public void convertPhotosToJson() throws IOException {
         PhotosResponseModel mock = new PhotosResponseModel();
         modelSetUp(mock);
-        mock.getPhotos().add(base64());
+        mock.getPhotos().add(testingUtils.base64());
 
         PhotosResponseModel testModel = PhotoUtils.convertPhotosToJson(setUpPhotosList());
         String actual = mock.getPhotos().get(0).replaceAll("\\s+","");
@@ -101,7 +100,6 @@ public class PhotoUtilsTest {
 
     public String base64() throws IOException {
 
-        File file = new File("target/test-classes/base.txt");
-        return IOUtils.toString(new FileInputStream(file), "UTF-8");
+        return testingUtils.base64();
     }
 }

@@ -11,4 +11,5 @@ import java.util.List;
 public interface AlbumRepository extends CrudRepository<AlbumEntity, Integer> {
 
     List<AlbumEntity> findAlbumEntitiesByUserEntity(UserEntity userEntity);
+    AlbumEntity findAllByUserEntityAndAlbumName(UserEntity userEntity,String albumName);
 }

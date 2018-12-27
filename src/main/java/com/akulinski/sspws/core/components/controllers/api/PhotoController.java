@@ -30,13 +30,16 @@ public class PhotoController {
     private final PhotoRepository photoRepository;
 
     private final AlbumRepository albumRepository;
-    private final PhotoRequestParser photoRequestParser = new PhotoRequestParser(this);
+
+    private final PhotoRequestParser photoRequestParser;
 
     @Autowired
     public PhotoController(UserRepository userRepository, PhotoRepository photoRepository, AlbumRepository albumRepository) {
         this.userRepository = userRepository;
         this.photoRepository = photoRepository;
         this.albumRepository = albumRepository;
+        this.photoRequestParser = new PhotoRequestParser(photoRepository, userRepository, albumRepository);
+
     }
 
     @GetMapping(value = "/getByUsername/{name}")
@@ -61,14 +64,31 @@ public class PhotoController {
     @RequestMapping(value = "/addPhoto", method = RequestMethod.POST)
     public ResponseEntity<PhotoEntity> addPhoto(@RequestBody AddPhotoRequest addPhotoRequest) throws IOException {
 
-        UserEntity userEntity = userRepository.getByUsername(addPhotoRequest.getUser());
-        PhotoEntity photoEntity = PhotoUtils.convertToFile(addPhotoRequest, userEntity);
-        photoRepository.save(photoEntity);
+        PhotoEntity photoEntity = getPhotoEntityAndCreateAlbumIfDosntExists(addPhotoRequest);
 
         return new ResponseEntity<PhotoEntity>(photoEntity, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = "getPhoto/{albumName]/{title}")
+    private PhotoEntity getPhotoEntityAndCreateAlbumIfDosntExists(AddPhotoRequest addPhotoRequest) throws IOException {
+        UserEntity userEntity = userRepository.getByUsername(addPhotoRequest.getUser());
+        PhotoEntity photoEntity = PhotoUtils.convertToFile(addPhotoRequest, userEntity);
+
+        AlbumEntity albumEntity = albumRepository.findAllByUserEntityAndAlbumName(userEntity, addPhotoRequest.getTitle());
+
+        if (albumEntity == null) {
+            albumEntity = new AlbumEntity();
+            albumEntity.setAlbumName(addPhotoRequest.getTitle());
+            albumEntity.setUserEntity(userEntity);
+            albumRepository.save(albumEntity);
+        }
+        photoEntity.setAlbumEntity(albumEntity);
+
+        photoRepository.save(photoEntity);
+        return photoEntity;
+
+    }
+
+    @GetMapping(value = "/getPhoto/{albumName}/{title}")
     public ResponseEntity<String> getPhoto(@PathVariable String albumName, @PathVariable String title, Principal principal) {
 
         String base64 = photoRequestParser.getBase64OfRequestedPhoto(albumName, title, principal);

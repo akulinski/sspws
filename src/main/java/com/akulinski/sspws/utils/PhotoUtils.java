@@ -97,7 +97,6 @@ public class PhotoUtils {
         ByteArrayOutputStream bytes = null;
         String base64 = null;
 
-
         try {
 
             bytes = new ByteArrayOutputStream((int) (Files.size(path) * 4 / 3 + 4));

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
+    <meta charset="UTF-8">
+    <title>Album ${album}</title>
 </head>
 <body>
 
@@ -10,19 +11,13 @@
     <#include "navbar.ftl">
 
     <div class="row">
-    <#list albums as album>
+    <#list photos as photo>
 
         <div class="col-sm">
 
             <div class="card" style="width: 18rem;">
                 <div class="content">
-                    <img class="card-img-top" src="/images/img.png" alt="Card image cap">
-
-                    <div class="card-body">
-                        <h5 class="card-title">${album.getAlbumName()}</h5>
-                        <p class="card-text">${album.getAlbumDescription()}</p>
-                        <a href="/album/${album.getAlbumName()}" class="btn btn-primary">Go to album</a>
-                    </div>
+                    <img class="card-img-top" src="${photo}" alt="Card image cap">
                 </div>
             </div>
 
@@ -46,6 +41,5 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
         integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
         crossorigin="anonymous"></script>
-<link rel="stylesheet" href="/css/index.css">
 </body>
 </html>

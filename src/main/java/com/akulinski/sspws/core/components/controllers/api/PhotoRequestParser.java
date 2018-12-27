@@ -3,40 +3,56 @@ package com.akulinski.sspws.core.components.controllers.api;
 import com.akulinski.sspws.core.components.entites.photo.AlbumEntity;
 import com.akulinski.sspws.core.components.entites.photo.PhotoEntity;
 import com.akulinski.sspws.core.components.entites.user.UserEntity;
+import com.akulinski.sspws.core.components.repositories.photo.AlbumRepository;
+import com.akulinski.sspws.core.components.repositories.photo.PhotoRepository;
+import com.akulinski.sspws.core.components.repositories.user.UserRepository;
 import com.akulinski.sspws.utils.PhotoUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PhotoRequestParser {
-    private final PhotoController photoController;
+    private PhotoRepository photoRepository;
+    private UserRepository userRepository;
+    private AlbumRepository albumRepository;
 
-    public PhotoRequestParser(PhotoController photoController) {
-        this.photoController = photoController;
+    public PhotoRequestParser(PhotoRepository photoRepository, UserRepository userRepository, AlbumRepository albumRepository) {
+        this.photoRepository = photoRepository;
+        this.userRepository = userRepository;
+        this.albumRepository = albumRepository;
     }
 
-    String getBase64OfRequestedPhoto(@PathVariable String albumName, @PathVariable String title, Principal principal) {
+    String getBase64OfRequestedPhoto(String albumName, String title, Principal principal) {
         PhotoEntity photoEntity = getPhotoEntityFromRequest(albumName, title, principal);
         ArrayList<PhotoEntity> listOfPhotoEntites = new ArrayList<PhotoEntity>();
         listOfPhotoEntites.add(photoEntity);
         return PhotoUtils.convertPhotosToJson(listOfPhotoEntites).getPhotos().get(0);
     }
 
-    PhotoEntity getPhotoEntityFromRequest(@PathVariable String albumName, @PathVariable String title, Principal principal) {
+    public LinkedList<String> getListOfBase64OfAllPhotosInAlbum(String albumName, Principal principal) {
+
+        AlbumEntity albumEntity = getAlbumEntityByAlbumName(albumName, userRepository.getByUsername(principal.getName()));
+
+        ArrayList<PhotoEntity> photoEntities = photoRepository.getByAlbumEntity(albumEntity);
+
+        return PhotoUtils.convertPhotosToJson(photoEntities).getPhotos();
+    }
+
+    PhotoEntity getPhotoEntityFromRequest(String albumName, String title, Principal principal) {
         String username = principal.getName();
 
-        UserEntity userEntity = photoController.getUserRepository().getByUsername(username);
+        UserEntity userEntity = userRepository.getByUsername(username);
 
         AlbumEntity albumEntity = getAlbumEntityByAlbumName(albumName, userEntity);
 
-        return photoController.getPhotoRepository().getByAlbumEntityAndTitle(albumEntity, title);
+        return photoRepository.getByAlbumEntityAndTitle(albumEntity, title);
     }
 
-    AlbumEntity getAlbumEntityByAlbumName(@PathVariable String albumName, UserEntity userEntity) {
-        List<AlbumEntity> albumEntities = photoController.getAlbumRepository().findAlbumEntitiesByUserEntity(userEntity);
+    AlbumEntity getAlbumEntityByAlbumName(String albumName, UserEntity userEntity) {
+        List<AlbumEntity> albumEntities = albumRepository.findAlbumEntitiesByUserEntity(userEntity);
 
         AtomicReference<AlbumEntity> albumEntity = new AtomicReference<AlbumEntity>();
 
