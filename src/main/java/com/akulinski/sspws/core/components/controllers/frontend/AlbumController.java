@@ -33,7 +33,6 @@ public class AlbumController {
         this.userRepository = userRepository;
         this.photoRepository = photoRepository;
         this.albumRepository = albumRepository;
-
         this.photoRequestParser = new PhotoRequestParser(photoRepository, userRepository, albumRepository);
     }
 

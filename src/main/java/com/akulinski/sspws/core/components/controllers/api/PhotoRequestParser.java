@@ -7,6 +7,8 @@ import com.akulinski.sspws.core.components.repositories.photo.AlbumRepository;
 import com.akulinski.sspws.core.components.repositories.photo.PhotoRepository;
 import com.akulinski.sspws.core.components.repositories.user.UserRepository;
 import com.akulinski.sspws.utils.PhotoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -14,18 +16,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Component
 public class PhotoRequestParser {
-    private PhotoRepository photoRepository;
-    private UserRepository userRepository;
-    private AlbumRepository albumRepository;
 
+    private final PhotoRepository photoRepository;
+    private final UserRepository userRepository;
+    private final AlbumRepository albumRepository;
+
+    @Autowired
     public PhotoRequestParser(PhotoRepository photoRepository, UserRepository userRepository, AlbumRepository albumRepository) {
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
         this.albumRepository = albumRepository;
     }
 
-    String getBase64OfRequestedPhoto(String albumName, String title, Principal principal) {
+    public String getBase64OfRequestedPhoto(String albumName, String title, Principal principal) {
         PhotoEntity photoEntity = getPhotoEntityFromRequest(albumName, title, principal);
         ArrayList<PhotoEntity> listOfPhotoEntites = new ArrayList<PhotoEntity>();
         listOfPhotoEntites.add(photoEntity);

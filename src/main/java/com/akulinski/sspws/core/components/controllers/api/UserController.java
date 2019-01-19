@@ -1,16 +1,13 @@
 package com.akulinski.sspws.core.components.controllers.api;
 
-import com.akulinski.sspws.core.components.entites.photo.AlbumEntity;
-import com.akulinski.sspws.core.components.entites.user.UserEntity;
 import com.akulinski.sspws.core.components.repositories.user.UserRepository;
+import com.akulinski.sspws.core.components.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -18,42 +15,27 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    private final UserService userService;
+
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    @RequestMapping(value = "/getAllUsers",method={RequestMethod.GET,RequestMethod.POST})
-    public ResponseEntity<List<UserEntity>> getAll() {
-        return new ResponseEntity<List<UserEntity>>(userRepository.findAll(), HttpStatus.ACCEPTED);
+    @RequestMapping(value = "/getAllUsers", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity getAll() {
+        return new ResponseEntity<>(userRepository.findAll(), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getUserById/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable String id) {
-        try {
-            Integer idInteger = Integer.valueOf(id);
-            return new ResponseEntity<UserEntity>(userRepository.getById(idInteger), HttpStatus.ACCEPTED);
-        } catch (NumberFormatException numberFormatException) {
-            return new ResponseEntity<UserEntity>(new UserEntity(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity getUserById(@PathVariable String id) {
+        return userService.getUserEntityResponseEntity(id);
     }
 
     @GetMapping("/getAlbums")
-    public ResponseEntity<ArrayList<AlbumEntity>> getAlbums(Principal principal) {
-
-        UserEntity userEntity = getUserEntityFromPrincipal(principal);
-
-        ArrayList<AlbumEntity> albumEntities = getAlbumEntitiesFromUserEntity(userEntity);
-
-        return new ResponseEntity<ArrayList<AlbumEntity>>(albumEntities, HttpStatus.ACCEPTED);
+    public ResponseEntity getAlbums(Principal principal) {
+        return userService.getUserAlbumsResponseEntity(principal);
     }
 
-    private UserEntity getUserEntityFromPrincipal(Principal principal) {
-        String username = principal.getName();
-        return userRepository.getByUsername(username);
-    }
-
-    private ArrayList<AlbumEntity> getAlbumEntitiesFromUserEntity(UserEntity userEntity) {
-        return new ArrayList<>(userEntity.getAlbumEntitySet());
-    }
 }

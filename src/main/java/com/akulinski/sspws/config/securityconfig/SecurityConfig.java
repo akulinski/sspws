@@ -1,6 +1,6 @@
 package com.akulinski.sspws.config.securityconfig;
 
-import com.akulinski.sspws.core.components.services.MyUserDetailsService;
+import com.akulinski.sspws.core.components.services.UserEntityDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +17,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] allowedResources = {"/javax.faces.resource/**", "/webjars/**", "/resources/**", "/static/**"};
 
-    private final MyUserDetailsService userDetailsService;
+    private final UserEntityDetailsService userDetailsService;
 
 
     @Autowired
-    public SecurityConfig(MyUserDetailsService userDetailsService) {
+    public SecurityConfig(UserEntityDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

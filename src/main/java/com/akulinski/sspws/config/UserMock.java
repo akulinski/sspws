@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 @Component
@@ -32,18 +31,15 @@ public class UserMock {
 
     private final Lorem lorem;
 
-    private SecureRandom secureRandom;
 
     @Autowired
-    public UserMock(UserRepository userRepository, PasswordEncoder passwordEncoder,PhotoRepository photoRepository, AlbumRepository albumRepository) {
+    public UserMock(UserRepository userRepository, PasswordEncoder passwordEncoder, PhotoRepository photoRepository, AlbumRepository albumRepository) {
         this.userRepository = userRepository;
         this.albumRepository = albumRepository;
         this.nameGenerator = new NameGenerator();
         this.passwordEncoder = passwordEncoder;
         this.photoRepository = photoRepository;
         this.lorem = LoremIpsum.getInstance();
-        this.secureRandom = new SecureRandom();
-
     }
 
     public void mockData() {
