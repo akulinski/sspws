@@ -1,4 +1,7 @@
-sudo: false
+sudo: true
 language: java
-services:
-- docker
+jdk: oraclejdk8
+
+script:
+  - ./mvnw clean install -B
+  - chmod +x mvnw

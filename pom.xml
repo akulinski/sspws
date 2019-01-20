@@ -144,11 +144,10 @@
             <version>bdd2cbfba0</version>
         </dependency>
 
-
+        <!-- H2 Database -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->

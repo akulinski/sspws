@@ -3,9 +3,9 @@ package com.akulinski.sspws.config;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class ServletCustomizer implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 
     @Override
